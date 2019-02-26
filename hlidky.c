@@ -16,6 +16,8 @@ int main() {
     for (; k > 0; k--) {
         scanf("%d%d%d", &a, &b, &h);
     }
-    
+
+    // bacha prvně uvolni vrcholy pak až graf jako celek
+    free(graph);
     return 0;
 }
