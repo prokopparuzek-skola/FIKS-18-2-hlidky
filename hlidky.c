@@ -32,6 +32,7 @@ int main() {
     initGraph(graph, k);
     for (; k > 0; k--) {
         scanf("%d%d%d", &a, &b, &h);
+        addEdge(graph[a], b, h);
     }
 
     // bacha prvně uvolni vrcholy pak až graf jako celek
