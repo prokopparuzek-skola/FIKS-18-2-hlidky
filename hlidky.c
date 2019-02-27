@@ -23,8 +23,12 @@ void initGraph(edge **graph, int k) {
     }
 }
 
+int bts(edge **graph, int n, int max) {
+
+}
+
 int main() {
-    int n, k, a, b, h;
+    int n, k, a, b, h, q, s, c;
     edge **graph;
 
     scanf("%d%d", &n, &k);
@@ -34,8 +38,14 @@ int main() {
         scanf("%d%d%d", &a, &b, &h);
         addEdge(graph[a], b, h);
     }
+    scanf("%d", &q);
+    for (; q > 0; q--) {
+        scanf("%d%d", &s, &c);
+    }
 
-    // bacha prvně uvolni vrcholy pak až graf jako celek
+    for (n--; n >= 0; n--) {
+        free(graph[n]);
+    }
     free(graph);
     return 0;
 }
