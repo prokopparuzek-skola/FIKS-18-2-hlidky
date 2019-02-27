@@ -8,14 +8,16 @@ typedef struct {
 } edge;
 
 typedef struct {
+    int a;
+    int b;
     int indexAc;
     int indexFu;
     unsigned *stackAc;
     unsigned *stackFu;
-    int *buff;
+    int *parents;
 } buffer_t;
 
-int makeSteps(edge **graph, buffer_t *queue, int a, int b, int max);
+int makeSteps(edge **graph, buffer_t *queue, int max);
 int solveStep(edge **graph, buffer_t *queue, int index, int b);
 
 void addEdge(edge *vertex, int to, int count) {
@@ -37,28 +39,27 @@ void initGraph(edge **graph, int n) {
 
 int bts(edge **graph, int n, int a, int b) {
     int i;
-    buffer_t queue = {0, -1, NULL, NULL, NULL}; // indexFu je -1, před 1. použitím se zvětší
+    buffer_t queue = {a, b, 0, -1, NULL, NULL}; // indexFu je -1, před 1. použitím se zvětší
 
     queue.stackAc = malloc(n * sizeof(unsigned));
     queue.stackFu = malloc(n * sizeof(unsigned));
-    queue.buff = malloc(n * sizeof(int));
-    if (queue.buff == NULL || queue.stackAc == NULL || queue.stackFu == NULL) {
+    if (queue.stackAc == NULL || queue.stackFu == NULL) {
         puts("Málo paměti");
         exit(1);
     }
-    memset(queue.buff, -1, n);
-    queue.stackAc[0] = 0;
+    memset(queue.parents, -1, n);
+    queue.stackAc[0] = b;
 
     for (i = 0;; i++) {
-        makeSteps(graph, &queue, a, b, i);
+        makeSteps(graph, &queue, i);
     }
 }
 
-int makeSteps(edge **graph, buffer_t *queue, int a, int b, int max) {
+int makeSteps(edge **graph, buffer_t *queue, int max) {
     unsigned int i, *swapS;
 
     for (i = 0; i <= queue->indexAc; i++) {
-        solveStep(graph, queue, i, b);
+        solveStep(graph, queue, i, max);
     }
     swapS = queue->stackAc;
     queue->stackAc = queue->stackFu;
@@ -67,8 +68,15 @@ int makeSteps(edge **graph, buffer_t *queue, int a, int b, int max) {
     queue->indexFu = -1;
 }
 
-int solveStep(edge **graph, buffer_t *queue, int index, int b) {
-
+int solveStep(edge **graph, buffer_t *queue, int index, int max) {
+    int i;
+    for (i = 0; graph[index][i].to != -1; i++) {
+        if (graph[index][i].watchCount <= max) {
+            queue->indexFu++; // zvyš index příštích bodů o 1
+            queue->stackFu[queue->indexFu] = graph[index][i].to; // ulož tam aktuální bod
+            queue->parents[graph[index][i].to] = queue->stackAc[queue->indexAc] ;
+        }
+    }
 }
 
 int main() {
