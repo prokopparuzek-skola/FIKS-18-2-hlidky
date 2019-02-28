@@ -39,14 +39,21 @@ void initGraph(edge **graph, int n) {
     }
 }
 
-void findRoute(edge ** graph, buffer_t *queue) {
+void findRoute(edge ** graph, buffer_t *queue, int n) {
    int position = queue->b;
+   int route[n];
+   int *index = route;
 
    while (position != queue->a) {
-       printf("%d ", position);
+       *index++ = position;
        position = queue->parents[position];
    }
-   printf("%d\n", queue->a);
+   *index = queue->a;
+   while (index != route) {
+       printf("%d ", *index);
+       index--;
+   }
+   printf("%d\n", *index);
 }
 
 int solve(edge **graph, buffer_t *queue, int max) {
@@ -78,7 +85,7 @@ void bts(edge **graph, int n, int a, int b, int maxCount) {
         queue.parents[a] = a;
         back = solve(graph, &queue, i);
         if (back == 0) {
-            findRoute(graph, &queue);
+            findRoute(graph, &queue, n);
             printf("%d\n", i);
             break;
         }
