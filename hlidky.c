@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include<string.h>
+#define RESET_PAR for (j = 0; j < n; j++) queue.parents[j] = -1
 
 typedef struct {
     int to;
@@ -57,7 +58,7 @@ int solve(edge **graph, buffer_t *queue, int max) {
 }
 
 void bts(edge **graph, int n, int a, int b) {
-    int i;
+    int i, j;
     int back; // návratová hodnota solveStep
     buffer_t queue = {a, b, 0, -1, NULL, NULL}; // indexFu je -1, před 1. použitím se zvětší
 
@@ -68,10 +69,10 @@ void bts(edge **graph, int n, int a, int b) {
         puts("Málo paměti");
         exit(1);
     }
-    for (i = 0; i < n; i++) queue.parents[i] = -1;
     queue.stackAc[0] = a;
 
     for (i = 0;; i++) {
+        RESET_PAR;
         back = solve(graph, &queue, i);
         if (back == 0) {
             findRoute(graph, &queue);
@@ -108,7 +109,7 @@ int makeSteps(edge **graph, buffer_t *queue, int max) {
 int solveStep(edge **graph, buffer_t *queue, int index, int max) {
     int i, test = 0;
     for (i = 0; graph[index][i].to != -1; i++) {
-        if (graph[index][i].watchCount <= max && queue->parents[graph[index][i].to] != -1) {
+        if (graph[index][i].watchCount <= max && queue->parents[graph[index][i].to] == -1) {
             test = 1;
             queue->indexFu++; // zvyš index příštích bodů o 1
             queue->stackFu[queue->indexFu] = graph[index][i].to; // ulož tam aktuální bod
