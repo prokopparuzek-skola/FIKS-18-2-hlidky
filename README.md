@@ -18,4 +18,4 @@ Složitost nalezení cesty je `O(N)`, kdy N je počet měst na cestě. Celková 
 O(N*N+N)
 O(N^2)
 ```
-Kdy N navíc je kolikrát jsem prováděl hledání než jsem nalezlcíl.
+Kdy N navíc je kolikrát jsem prováděl hledání než jsem nalezl cíl.
