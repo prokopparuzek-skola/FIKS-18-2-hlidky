@@ -56,7 +56,7 @@ int solve(edge **graph, buffer_t *queue, int max) {
     return back;
 }
 
-int bts(edge **graph, int n, int a, int b) {
+void bts(edge **graph, int n, int a, int b) {
     int i;
     int back; // návratová hodnota solveStep
     buffer_t queue = {a, b, 0, -1, NULL, NULL}; // indexFu je -1, před 1. použitím se zvětší
@@ -76,6 +76,7 @@ int bts(edge **graph, int n, int a, int b) {
         if (back == 0) {
             findRoute(graph, &queue);
             printf("%d\n", i);
+            break;
         }
     }
 }
@@ -107,7 +108,7 @@ int makeSteps(edge **graph, buffer_t *queue, int max) {
 int solveStep(edge **graph, buffer_t *queue, int index, int max) {
     int i, test = 0;
     for (i = 0; graph[index][i].to != -1; i++) {
-        if (graph[index][i].watchCount <= max || queue->parents[graph[index][i].to] != -1) {
+        if (graph[index][i].watchCount <= max && queue->parents[graph[index][i].to] != -1) {
             test = 1;
             queue->indexFu++; // zvyš index příštích bodů o 1
             queue->stackFu[queue->indexFu] = graph[index][i].to; // ulož tam aktuální bod
@@ -129,13 +130,16 @@ int main() {
     initGraph(graph, n);
     for (; k > 0; k--) {
         scanf("%d%d%d", &a, &b, &h);
-        a--;b--;
+        a--;
+        b--;
         addEdge(graph[a], b, h);
         addEdge(graph[b], a, h);
     }
     scanf("%d", &q);
     for (; q > 0; q--) {
         scanf("%d%d", &s, &c);
+        s--;
+        c--;
         bts(graph, n, s, c);
     }
 
