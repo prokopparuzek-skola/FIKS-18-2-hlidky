@@ -37,8 +37,19 @@ void initGraph(edge **graph, int n) {
     }
 }
 
+void findRoute(edge ** graph, buffer_t *queue) {
+   int position = queue->b;
+
+   while (position != queue->a) {
+       printf("%d ", position);
+       position = queue->parents[position];
+   }
+   printf("\n");
+}
+
 int bts(edge **graph, int n, int a, int b) {
     int i;
+    int back; // návratová hodnota solveStep
     buffer_t queue = {a, b, 0, -1, NULL, NULL}; // indexFu je -1, před 1. použitím se zvětší
 
     queue.stackAc = malloc(n * sizeof(unsigned));
@@ -51,32 +62,45 @@ int bts(edge **graph, int n, int a, int b) {
     queue.stackAc[0] = b;
 
     for (i = 0;; i++) {
-        makeSteps(graph, &queue, i);
+        back = makeSteps(graph, &queue, i);
+        if (back == 1) {
+            findRoute(graph, &queue);
+            printf("%d\n", i);
+        }
     }
 }
 
 int makeSteps(edge **graph, buffer_t *queue, int max) {
     unsigned int i, *swapS;
+    int back; // návratová hodnota solveStep
 
     for (i = 0; i <= queue->indexAc; i++) {
-        solveStep(graph, queue, i, max);
+        back = solveStep(graph, queue, i, max);
+        if (back == 1) {
+            return 1;
+        }
     }
     swapS = queue->stackAc;
     queue->stackAc = queue->stackFu;
     queue->stackFu = swapS;
     queue->indexAc = queue->indexFu;
     queue->indexFu = -1;
+    return 0;
 }
 
 int solveStep(edge **graph, buffer_t *queue, int index, int max) {
     int i;
     for (i = 0; graph[index][i].to != -1; i++) {
-        if (graph[index][i].watchCount <= max) {
+        if (graph[index][i].watchCount <= max || queue->parents[graph[index][i].to] == -1) {
             queue->indexFu++; // zvyš index příštích bodů o 1
             queue->stackFu[queue->indexFu] = graph[index][i].to; // ulož tam aktuální bod
-            queue->parents[graph[index][i].to] = queue->stackAc[queue->indexAc] ;
+            queue->parents[graph[index][i].to] = queue->stackAc[queue->indexAc];
+            if (graph[index][i].to == queue->b) {
+                return 1;
+            }
         }
     }
+    return 0;
 }
 
 int main() {
@@ -89,6 +113,7 @@ int main() {
     for (; k > 0; k--) {
         scanf("%d%d%d", &a, &b, &h);
         addEdge(graph[a], b, h);
+        addEdge(graph[b], a, h);
     }
     scanf("%d", &q);
     for (; q > 0; q--) {
