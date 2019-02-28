@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include<string.h>
 #define RESET_PAR for (j = 0; j < n; j++) queue.parents[j] = -1
+#define IMEST 1 // indexovani mest v zadani(1 od 1; 0 od 0)
 
 typedef struct {
     int to;
@@ -50,10 +51,10 @@ void findRoute(edge ** graph, buffer_t *queue, int n) {
    }
    *index = queue->a;
    while (index != route) {
-       printf("%d ", *index);
+       printf("%d ", *index + IMEST);
        index--;
    }
-   printf("%d\n", *index);
+   printf("%d\n", *index + IMEST);
 }
 
 int solve(edge **graph, buffer_t *queue, int max) {
@@ -146,8 +147,8 @@ int main() {
     initGraph(graph, n);
     for (; k > 0; k--) {
         scanf("%d%d%d", &a, &b, &h);
-        a--;
-        b--;
+        a -= IMEST;
+        b -= IMEST;
         addEdge(graph[a], b, h);
         addEdge(graph[b], a, h);
         if (h > maxCount) {
