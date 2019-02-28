@@ -30,6 +30,7 @@ void initGraph(edge **graph, int n) {
     int i, j;
 
     for (i = 0; i < n; i++) {
+        graph[i] = malloc(n * sizeof(edge));
         for (j = 0; j < (n - 1) ; j++) {
             graph[i][j].to = -1;
             graph[i][j].watchCount = -1;
@@ -54,6 +55,7 @@ int bts(edge **graph, int n, int a, int b) {
 
     queue.stackAc = malloc(n * sizeof(unsigned));
     queue.stackFu = malloc(n * sizeof(unsigned));
+    queue.parents = malloc(n * sizeof(int));
     if (queue.stackAc == NULL || queue.stackFu == NULL) {
         puts("Málo paměti");
         exit(1);
@@ -112,12 +114,14 @@ int main() {
     initGraph(graph, n);
     for (; k > 0; k--) {
         scanf("%d%d%d", &a, &b, &h);
+        a--;b--;
         addEdge(graph[a], b, h);
         addEdge(graph[b], a, h);
     }
     scanf("%d", &q);
     for (; q > 0; q--) {
         scanf("%d%d", &s, &c);
+        bts(graph, n, s, c);
     }
 
     for (n--; n >= 0; n--) {
